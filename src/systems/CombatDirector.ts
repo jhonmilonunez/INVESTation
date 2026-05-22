@@ -11,6 +11,7 @@ interface CombatDirectorUpdate {
   enemies: BillEnemyActor[];
   xpDrops: XpDropActor[];
   elapsedMs: number;
+  isFiring: boolean;
   spawnXp: (position: ex.Vector, amount: number) => void;
   onLevelReady: () => void;
   onMoneyChanged: () => void;
@@ -31,6 +32,7 @@ export class CombatDirector {
     enemies,
     xpDrops,
     elapsedMs,
+    isFiring,
     spawnXp,
     onLevelReady,
     onMoneyChanged
@@ -40,16 +42,16 @@ export class CombatDirector {
     }
 
     const elapsedSeconds = elapsedMs / 1000;
-    this.updateFiring(scene, player, bullets, elapsedSeconds);
+    this.updateFiring(scene, player, bullets, elapsedSeconds, isFiring);
     this.updateBulletHits(player, bullets, enemies, spawnXp);
     this.updateEnemyHitsPlayer(player, enemies, onMoneyChanged);
     this.updateXpPickups(player, xpDrops, onLevelReady);
   }
 
-  private updateFiring(scene: ex.Scene, player: PlayerActor, bullets: BulletActor[], elapsedSeconds: number): void {
+  private updateFiring(scene: ex.Scene, player: PlayerActor, bullets: BulletActor[], elapsedSeconds: number, isFiring: boolean): void {
     this.fireCooldownSeconds -= elapsedSeconds;
 
-    if (this.fireCooldownSeconds > 0 || !player.canAffordShot()) {
+    if (!isFiring || this.fireCooldownSeconds > 0 || !player.canAffordShot()) {
       return;
     }
 

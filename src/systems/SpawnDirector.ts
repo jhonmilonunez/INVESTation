@@ -13,6 +13,7 @@ import type { EnemyTypeDefinition } from "../types";
 
 export class SpawnDirector {
   private nextSpawnInSeconds = 1;
+  private debugSpawned = false;
 
   constructor(
     private readonly player: PlayerActor,
@@ -23,6 +24,13 @@ export class SpawnDirector {
   public update(elapsedMs: number, survivalSeconds: number): void {
     if (!this.canSpawn()) {
       return;
+    }
+
+    if (survivalSeconds >= 1 && !this.debugSpawned) {
+      this.debugSpawned = true;
+      for (const definition of ENEMY_TYPES) {
+        this.spawnEnemyOfType(definition, survivalSeconds);
+      }
     }
 
     this.nextSpawnInSeconds -= elapsedMs / 1000;
@@ -42,7 +50,10 @@ export class SpawnDirector {
   }
 
   private spawnEnemy(survivalSeconds: number): void {
-    const definition = chooseEnemyType(survivalSeconds);
+    this.spawnEnemyOfType(chooseEnemyType(survivalSeconds), survivalSeconds);
+  }
+
+  private spawnEnemyOfType(definition: EnemyTypeDefinition, survivalSeconds: number): void {
     const valueMultiplier = 1 + survivalSeconds / 480;
     const enemy = new BillEnemyActor(
       definition,
@@ -51,7 +62,6 @@ export class SpawnDirector {
       () => this.player.pos,
       this.canSpawn
     );
-
     this.addEnemy(enemy);
   }
 }

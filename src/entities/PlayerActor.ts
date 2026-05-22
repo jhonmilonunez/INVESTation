@@ -38,9 +38,11 @@ export class PlayerActor extends ex.Actor {
   public parentLoanAvailable = true;
   public emergencyFundReady = false;
   public cashbackRate = 0;
+  public xpGainMultiplier = 1;
   public readonly hitRadius = PLAYER_SIZE * 0.55;
 
   private readonly canMove: () => boolean;
+  private readonly emergencyRing: ex.Actor;
 
   constructor(position: ex.Vector, canMove: () => boolean) {
     super({
@@ -61,6 +63,17 @@ export class PlayerActor extends ex.Actor {
     });
     label.z = 21;
     this.addChild(label);
+
+    const ringGraphic = new ex.Circle({
+      radius: PLAYER_SIZE * 0.72,
+      color: ex.Color.Transparent,
+      strokeColor: ex.Color.fromHex("#75d8ff"),
+      lineWidth: 2,
+    });
+    this.emergencyRing = new ex.Actor({ z: 21 });
+    this.emergencyRing.graphics.use(ringGraphic);
+    this.emergencyRing.graphics.visible = false;
+    this.addChild(this.emergencyRing);
   }
 
   public onPreUpdate(engine: ex.Engine): void {
@@ -99,6 +112,7 @@ export class PlayerActor extends ex.Actor {
     const half = PLAYER_SIZE / 2;
     this.pos.x = clamp(this.pos.x, half, GAME_WIDTH - half);
     this.pos.y = clamp(this.pos.y, half, GAME_HEIGHT - half);
+    this.emergencyRing.graphics.visible = this.emergencyFundReady;
   }
 
   public earn(elapsedSeconds: number): void {
@@ -127,7 +141,7 @@ export class PlayerActor extends ex.Actor {
   }
 
   public collectXp(amount: number): boolean {
-    this.xp += amount;
+    this.xp += amount * this.xpGainMultiplier;
     return this.xp >= this.xpNeeded;
   }
 

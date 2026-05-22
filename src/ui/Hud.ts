@@ -11,6 +11,7 @@ export interface HudState {
   timeSurvivedSeconds: number;
   parentLoanAvailable: boolean;
   emergencyFundReady: boolean;
+  xpGainMultiplier: number;
   phase: GamePhase;
 }
 

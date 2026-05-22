@@ -20,7 +20,10 @@ export type UpgradeId =
   | "bulk-payment"
   | "emergency-fund"
   | "auto-pay"
-  | "cashback";
+  | "cashback"
+  | "career-switch"
+  | "professional-development"
+  | "stipend";
 
 export interface UpgradeTierDefinition {
   description: string;
@@ -32,6 +35,7 @@ export interface UpgradeDefinition {
   title: string;
   tiers: [UpgradeTierDefinition, ...UpgradeTierDefinition[]];
   infinite?: boolean;
+  fallbackOnly?: boolean;
 }
 
 export interface UpgradeChoice {
@@ -42,3 +46,25 @@ export interface UpgradeChoice {
 }
 
 export type GamePhase = "playing" | "level-up" | "parent-loan" | "won" | "lost";
+
+export interface StatsSnapshot {
+  incomePerSecond: number;
+  bulletCost: number;
+  bulletDamage: number;
+  fireRatePerSecond: number;
+  bulletCount: number;
+  cashbackRate: number;
+  emergencyFundReady: boolean;
+  xpGainMultiplier: number;
+}
+
+export interface StatsDelta {
+  incomePerSecond?: number;
+  bulletCost?: number;
+  bulletDamage?: number;
+  fireRatePerSecond?: number;
+  bulletCount?: number;
+  cashbackRate?: number;
+  emergencyFundReady?: boolean;
+  xpGainMultiplier?: number;
+}

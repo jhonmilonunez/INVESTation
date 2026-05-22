@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>INVESTation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
   </head>
   <body>
     <main id="app">
@@ -12,7 +14,18 @@
         <div id="hud"></div>
         <div id="message" aria-live="polite"></div>
         <div id="level-up" hidden></div>
-        <button id="bankruptcy" type="button">DECLARE BANKRUPTCY</button>
+        <div id="money-display"></div>
+        <div id="stats-panel" hidden></div>
+        <div id="bottom-ui">
+          <div id="xp-bar">
+            <div id="xp-fill"></div>
+            <span id="xp-level">1</span>
+          </div>
+          <div id="bottom-buttons">
+            <button id="gain-level" type="button">GAIN LEVEL</button>
+            <button id="bankruptcy" type="button">DECLARE BANKRUPTCY</button>
+          </div>
+        </div>
       </section>
     </main>
     <script type="module" src="/src/main.ts"></script>

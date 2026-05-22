@@ -1,5 +1,6 @@
 import * as ex from "excalibur";
 import type { EnemyTypeDefinition } from "../types";
+import { getEnemySpriteEntry } from "../assets/enemySprites";
 
 const enemyFont = new ex.Font({
   family: "Arial",
@@ -22,6 +23,7 @@ export class BillEnemyActor extends ex.Actor {
   private readonly canChase: () => boolean;
   private readonly label: ex.Label;
   private displayedLabel = "";
+  private walkTimer = 0;
 
   constructor(
     definition: EnemyTypeDefinition,
@@ -48,6 +50,33 @@ export class BillEnemyActor extends ex.Actor {
     this.targetProvider = targetProvider;
     this.canChase = canChase;
 
+    const spriteEntry = getEnemySpriteEntry(definition.id);
+    let displaySize = definition.size;
+    if (spriteEntry) {
+      const sprite = spriteEntry.source.toSprite();
+      displaySize = definition.size * spriteEntry.scale;
+      sprite.destSize = { width: displaySize, height: displaySize };
+      this.graphics.use(sprite);
+    }
+
+    // Shadow ellipse rendered below the sprite
+    const shadowW = displaySize * 0.75;
+    const shadowH = displaySize * 0.18;
+    const shadowGraphic = new ex.Canvas({
+      width: Math.ceil(shadowW),
+      height: Math.ceil(shadowH),
+      draw(ctx) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.22)";
+        ctx.beginPath();
+        ctx.ellipse(shadowW / 2, shadowH / 2, shadowW / 2, shadowH / 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+    const shadowOffsetY = spriteEntry?.shadowOffsetY ?? 0.48;
+    const shadow = new ex.Actor({ pos: ex.vec(0, displaySize * shadowOffsetY), z: -1 });
+    shadow.graphics.use(shadowGraphic);
+    this.addChild(shadow);
+
     this.label = new ex.Label({
       text: "",
       pos: ex.vec(0, 0),
@@ -55,13 +84,17 @@ export class BillEnemyActor extends ex.Actor {
       font: enemyFont
     });
     this.label.z = 12;
-    this.addChild(this.label);
-    this.refreshLabel();
+
+    if (!spriteEntry) {
+      this.addChild(this.label);
+      this.refreshLabel();
+    }
   }
 
-  public onPreUpdate(): void {
+  public onPreUpdate(_engine: ex.Engine, delta: number): void {
     if (!this.canChase() || !this.alive) {
       this.vel.setTo(0, 0);
+      this.rotation = 0;
       return;
     }
 
@@ -72,10 +105,14 @@ export class BillEnemyActor extends ex.Actor {
 
     if (distance < 1) {
       this.vel.setTo(0, 0);
+      this.rotation = 0;
       return;
     }
 
     this.vel.setTo((dx / distance) * this.definition.speed, (dy / distance) * this.definition.speed);
+
+    this.walkTimer += delta;
+    this.rotation = Math.sin(this.walkTimer / 280) * 0.035;
   }
 
   public onPostUpdate(_engine: ex.Engine, elapsedMs: number): void {

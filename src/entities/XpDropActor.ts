@@ -1,14 +1,7 @@
 import * as ex from "excalibur";
 import { XP_MAGNET_RADIUS, XP_PICKUP_RADIUS } from "../config/gameBalance";
 
-const xpFont = new ex.Font({
-  family: "Arial",
-  size: 9,
-  unit: ex.FontUnit.Px,
-  textAlign: ex.TextAlign.Center,
-  baseAlign: ex.BaseAlign.Middle,
-  bold: true
-});
+const XP_ORB_VISUAL_RADIUS = 7;
 
 export class XpDropActor extends ex.Actor {
   public readonly xpValue: number;
@@ -21,7 +14,7 @@ export class XpDropActor extends ex.Actor {
   constructor(position: ex.Vector, xpValue: number, playerPosition: () => ex.Vector, canMove: () => boolean) {
     super({
       pos: position,
-      radius: XP_PICKUP_RADIUS,
+      radius: XP_ORB_VISUAL_RADIUS,
       color: ex.Color.fromHex("#39d98a"),
       z: 8
     });
@@ -29,15 +22,6 @@ export class XpDropActor extends ex.Actor {
     this.xpValue = xpValue;
     this.playerPosition = playerPosition;
     this.canMove = canMove;
-
-    const label = new ex.Label({
-      text: "XP",
-      pos: ex.vec(0, 0),
-      color: ex.Color.fromHex("#052414"),
-      font: xpFont
-    });
-    label.z = 9;
-    this.addChild(label);
   }
 
   public onPreUpdate(): void {
@@ -56,7 +40,7 @@ export class XpDropActor extends ex.Actor {
       return;
     }
 
-    const speed = 90 + (1 - distance / XP_MAGNET_RADIUS) * 210;
+    const speed = (90 + (1 - distance / XP_MAGNET_RADIUS) * 210) * 1.75;
     this.vel.setTo((dx / distance) * speed, (dy / distance) * speed);
   }
 
