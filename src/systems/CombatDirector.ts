@@ -68,7 +68,7 @@ export class CombatDirector {
         player.pos.clone(),
         player.bulletDamage,
         angleOffset,
-        (from) => this.findClosestEnemy(from),
+        target,
         this.canFight
       );
       bullets.push(bullet);

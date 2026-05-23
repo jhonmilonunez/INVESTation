@@ -80,6 +80,10 @@ button {
   color: #aeb9cb;
 }
 
+.stats-preview .hud-row > span:first-child {
+  color: #000000;
+}
+
 .hud-alert {
   color: #ffcf6b;
 }
@@ -144,15 +148,14 @@ button {
 .stats-preview {
   width: min(680px, 100%);
   margin-top: 10px;
-  border: 1px solid rgba(199, 219, 244, 0.18);
-  background: rgba(17, 22, 31, 0.96);
+  background: url('/statsmenu.png') center / 100% 100% no-repeat;
   padding: 10px 16px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 24px;
   row-gap: 2px;
   font-size: 13px;
-  color: #f4f8ff;
+  color: #000000;
 }
 
 .delta-positive {
@@ -161,6 +164,24 @@ button {
 
 .delta-negative {
   color: #ff6b81;
+}
+
+.stats-preview .hud-row > span:last-child {
+  color: #ffffff;
+  text-shadow:
+    -1px -1px 0 #000, 1px -1px 0 #000,
+    -1px  1px 0 #000, 1px  1px 0 #000,
+     0   -1px 0 #000, 0    1px 0 #000,
+    -1px  0   0 #000, 1px  0   0 #000;
+}
+
+.stats-preview .delta-positive,
+.stats-preview .delta-negative {
+  text-shadow:
+    -1px -1px 0 #000, 1px -1px 0 #000,
+    -1px  1px 0 #000, 1px  1px 0 #000,
+     0   -1px 0 #000, 0    1px 0 #000,
+    -1px  0   0 #000, 1px  0   0 #000;
 }
 
 .upgrade-button {

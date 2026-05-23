@@ -2,6 +2,8 @@ import * as ex from "excalibur";
 import { GAME_HEIGHT, GAME_WIDTH } from "./config/gameBalance";
 import { GameScene } from "./scenes/GameScene";
 import { enemyImageSources } from "./assets/enemySprites";
+import { bulletImageSource } from "./assets/bulletSprite";
+import { xpImageSource } from "./assets/xpSprite";
 import "./style.css";
 
 const hudElement = document.querySelector<HTMLElement>("#hud");
@@ -59,7 +61,7 @@ game.add("game", new GameScene({
   },
 }));
 
-const loader = new ex.Loader(Object.values(enemyImageSources));
+const loader = new ex.Loader([...Object.values(enemyImageSources), bulletImageSource, xpImageSource]);
 loader.suppressPlayButton = true;
 loader.backgroundColor = "#0e1118";
 loader.logoWidth = 0;

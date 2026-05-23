@@ -1,5 +1,6 @@
 import * as ex from "excalibur";
 import { XP_MAGNET_RADIUS, XP_PICKUP_RADIUS } from "../config/gameBalance";
+import { xpImageSource } from "../assets/xpSprite";
 
 const XP_ORB_VISUAL_RADIUS = 7;
 
@@ -15,9 +16,14 @@ export class XpDropActor extends ex.Actor {
     super({
       pos: position,
       radius: XP_ORB_VISUAL_RADIUS,
-      color: ex.Color.fromHex("#39d98a"),
+      color: ex.Color.Transparent,
       z: 8
     });
+
+    const sprite = xpImageSource.toSprite();
+    const size = XP_ORB_VISUAL_RADIUS * 2;
+    sprite.destSize = { width: size, height: size };
+    this.graphics.use(sprite);
 
     this.xpValue = xpValue;
     this.playerPosition = playerPosition;

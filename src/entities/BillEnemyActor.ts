@@ -134,7 +134,7 @@ export class BillEnemyActor extends ex.Actor {
 
   public destroy(): void {
     this.alive = false;
-    this.kill();
+    this.actions.fade(0, 180).callMethod(() => this.kill());
   }
 
   private refreshLabel(): void {

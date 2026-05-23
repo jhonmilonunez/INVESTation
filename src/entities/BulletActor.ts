@@ -1,34 +1,44 @@
 import * as ex from "excalibur";
 import { BULLET_RADIUS, BULLET_SPEED, GAME_HEIGHT, GAME_WIDTH } from "../config/gameBalance";
 import type { BillEnemyActor } from "./BillEnemyActor";
+import { createBulletAnimation } from "../assets/bulletSprite";
 
 export class BulletActor extends ex.Actor {
   public readonly damage: number;
   public readonly hitRadius = BULLET_RADIUS;
   public alive = true;
 
+  private readonly lockedTarget: BillEnemyActor;
   private readonly angleOffsetRadians: number;
-  private readonly targetSelector: (from: ex.Vector) => BillEnemyActor | null;
   private readonly canMove: () => boolean;
 
   constructor(
     position: ex.Vector,
     damage: number,
     angleOffsetRadians: number,
-    targetSelector: (from: ex.Vector) => BillEnemyActor | null,
+    lockedTarget: BillEnemyActor,
     canMove: () => boolean
   ) {
     super({
       pos: position,
       radius: BULLET_RADIUS,
-      color: ex.Color.fromHex("#ffdc5a"),
+      color: ex.Color.Transparent,
       z: 15
     });
 
+    this.graphics.use(createBulletAnimation());
+
     this.damage = damage;
     this.angleOffsetRadians = angleOffsetRadians;
-    this.targetSelector = targetSelector;
+    this.lockedTarget = lockedTarget;
     this.canMove = canMove;
+
+    // Set initial velocity so the bullet has direction even if target dies on frame 1
+    const dx = lockedTarget.pos.x - position.x;
+    const dy = lockedTarget.pos.y - position.y;
+    const angle = Math.atan2(dy, dx) + angleOffsetRadians;
+    this.vel.setTo(Math.cos(angle) * BULLET_SPEED, Math.sin(angle) * BULLET_SPEED);
+    this.rotation = angle - Math.PI;
   }
 
   public onPreUpdate(): void {
@@ -37,13 +47,12 @@ export class BulletActor extends ex.Actor {
       return;
     }
 
-    const target = this.targetSelector(this.pos);
-    if (!target) {
+    if (!this.lockedTarget.alive) {
       return;
     }
 
-    const dx = target.pos.x - this.pos.x;
-    const dy = target.pos.y - this.pos.y;
+    const dx = this.lockedTarget.pos.x - this.pos.x;
+    const dy = this.lockedTarget.pos.y - this.pos.y;
     const distance = Math.hypot(dx, dy);
 
     if (distance < 1) {
@@ -53,6 +62,7 @@ export class BulletActor extends ex.Actor {
 
     const angle = Math.atan2(dy, dx) + this.angleOffsetRadians;
     this.vel.setTo(Math.cos(angle) * BULLET_SPEED, Math.sin(angle) * BULLET_SPEED);
+    this.rotation = angle - Math.PI;
   }
 
   public onPostUpdate(): void {
